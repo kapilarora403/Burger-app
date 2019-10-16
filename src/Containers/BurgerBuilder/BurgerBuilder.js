@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import Aux from "../../hoc/aux";
 import Burger from '../../Components/Burger/Burger';
 import BuildControls from '../../Components/BuildControls/BuildControls';
+import Modal from '../../Components/UI/Modal/Modal';
+import OrderSummary from '../../Components/OrderSummary/OrderSummary';
 
 const INGREDIENT_PRICES = {
     salad: 5,
@@ -18,7 +20,8 @@ class BurgerBuilder extends Component {
             meat: 0
         },
         totalPrice: 40,
-        purchasable: false
+        purchasable: false,
+        purchasing: false
     };
 
     updatePurchaseState = (ingredients) => {
@@ -64,6 +67,18 @@ class BurgerBuilder extends Component {
             this.updatePurchaseState(updatedIngredients);
         }
     };
+    checkoutModalHandler = () => {
+        this.setState({purchasing: true})
+    };
+
+    modalCloser = () => {
+        this.setState({purchasing: false})
+    };
+
+    purchaseContinueHandler = () => {
+        alert('You Continue!');
+    };
+
     render() {
         const disabledInfo = {
             ...this.state.ingredients
@@ -73,6 +88,13 @@ class BurgerBuilder extends Component {
         }
         return(
             <Aux>
+                 <Modal show={this.state.purchasing} modalCloser={this.modalCloser}>
+                     <OrderSummary ingredients={this.state.ingredients}
+                     purchaseCancelled={this.modalCloser}
+                     purchaceContinued={this.purchaseContinueHandler}
+                     totalPrice={this.state.totalPrice}
+                     />
+                 </Modal>
                 <Burger ingredients={this.state.ingredients} />
                 <BuildControls
                     lessHandler={this.removeIngredientHandler}
@@ -80,6 +102,7 @@ class BurgerBuilder extends Component {
                     disabled={disabledInfo}
                     totalPrice={this.state.totalPrice}
                     purchasable={this.state.purchasable}
+                    purchasing={this.checkoutModalHandler}
                 />
             </Aux>
         )
